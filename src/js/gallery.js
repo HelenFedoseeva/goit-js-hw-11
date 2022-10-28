@@ -132,18 +132,17 @@ function lightBoxHandler(event) {
   }
 }
 
-loadMoreBtn.addEventListener('click', () => {
-  fetchEvent(keyword, page).then(data => {
-    if (data.hits.length === 0) {
+loadMoreBtn.addEventListener('click', async () => {
+  try {
+    const receivedData = await fetchEvent(keyword, page);
+    if (receivedData.hits.length === 0) {
       Notiflix.Notify.failure(
         "We're sorry, but you've reached the end of search results. "
       );
       loadMoreBtn.classList.add('hidden');
       return;
     }
-
-    renderMarkup(data);
-
+    renderMarkup(receivedData);
     const { height: cardHeight } = document
       .querySelector('.gallery')
       .firstElementChild.getBoundingClientRect();
@@ -152,7 +151,8 @@ loadMoreBtn.addEventListener('click', () => {
       top: cardHeight * 2,
       behavior: 'smooth',
     });
-
     page += 1;
-  });
+  } catch {
+    console.log(console.error());
+  }
 });
