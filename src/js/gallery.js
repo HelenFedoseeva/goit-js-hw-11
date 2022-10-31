@@ -135,14 +135,18 @@ function lightBoxHandler(event) {
 loadMoreBtn.addEventListener('click', async () => {
   try {
     const receivedData = await fetchEvent(keyword, page);
-    if (receivedData.hits.length === 0) {
+
+    if (page === Math.ceil(receivedData.totalHits / 40)) {
       Notiflix.Notify.failure(
         "We're sorry, but you've reached the end of search results. "
       );
+      renderMarkup(receivedData);
       loadMoreBtn.classList.add('hidden');
       return;
     }
     renderMarkup(receivedData);
+    page += 1;
+
     const { height: cardHeight } = document
       .querySelector('.gallery')
       .firstElementChild.getBoundingClientRect();
@@ -151,7 +155,6 @@ loadMoreBtn.addEventListener('click', async () => {
       top: cardHeight * 2,
       behavior: 'smooth',
     });
-    page += 1;
   } catch {
     console.log(console.error());
   }
